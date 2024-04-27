@@ -1,17 +1,18 @@
 'use client'
 
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useDraw } from "../../hooks/useDraw";
+import { SketchPicker } from "react-color";
 
 interface pageProps { }
 
 const Page: FC<pageProps> = () => {
-
-  const { canvasRef, onMouseDown } = useDraw(drawLine);
+  const [color, setColor] = useState<string>('#000');
+  const { canvasRef, onMouseDown, clear } = useDraw(drawLine);
 
   function drawLine({ prevPoint, currentPoint, ctx }: Draw) {
     const { x: currX, y: currY } = currentPoint;
-    const lineColor = '#000';
+    const lineColor = color;
     const lineWidth = 5;
 
     let startPoint = prevPoint ?? currentPoint;
@@ -29,13 +30,27 @@ const Page: FC<pageProps> = () => {
   }
 
   return (
-    <div className="w-screen h-screen bg-slate-200 flex justify-center items-center">
+    <div className="w-screen h-screen bg-slate-200 flex gap-3 justify-center items-center">
+      <div className="flex flex-col gap-4 justify-center">
+        <SketchPicker
+          color={color}
+          onChange={(e) => setColor(e.hex)}
+        />
+        <button
+          className="p-2 bg-green-300 text-gray-800 font-medium shadow-sm rounded-md hover:bg-green-400 transition-colors duration-200"
+          type="button"
+          onClick={clear}
+        >
+          Clear Canvas
+        </button>
+      </div>
+
       <canvas
         ref={canvasRef}
         onMouseDown={onMouseDown}
-        width={750}
-        height={750}
-        className="border border-black rounded-md"
+        width={850}
+        height={850}
+        className="border border-black rounded-md bg-white"
       />
     </div>
   );
